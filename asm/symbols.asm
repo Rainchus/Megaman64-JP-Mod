@@ -56,7 +56,33 @@
 .definelabel sprintf, 0x8009A0A0
 .definelabel gCurHP, 0x8020CAEE
 .definelabel gMaxHP, 0x8020CB30
+.definelabel _bzero, 0x80099F70
+.definelabel __osCurrentTime, 0x801E08E8
+.definelabel __osThreadTail, 0x800D0050;
+.definelabel __osRunQueue, 0x800D0058;
+.definelabel __osActiveQueue, 0x800D005C;
+.definelabel __osRunningThread, 0x800D0060;
+.definelabel __osFaultedThread, 0x800D0064;
+.definelabel __osTimerList, 0x800D0070;
 
+
+.definelabel ldiv, 0x800A2E80
+.definelabel lldiv, 0x800A2F04
+.definelabel __divdi3, 0x800A2F04
+.definelabel __udivdi3, 0x800A36A0
+.definelabel __moddi3, 0x800A35E0
+.definelabel __muldi3, 0x800A3334
+.definelabel __umoddi3, 0x800A36C0
+.definelabel osGetTime, 0x8009B920
+.definelabel osWritebackDCacheAll, 0x800992B0;
+.definelabel osViBlack, 0x8009C8A0;
+.definelabel osViSwapBuffer, 0x8009C540;
+.definelabel osSetEventMesg, 0x8009A500;
+.definelabel osStopThread, 0x8009B7D0
+.definelabel osMemSize, 0x80000318
+.definelabel __OSViContext, 0x800D12E0
+.definelabel __osViCurr, 0x800D1340
+.definelabel __osViNext, 0x800D1344
 
     //gfx_disp = malloc(GFX_SIZE); //0x7500
     //gfx_disp_work = malloc(GFX_SIZE);

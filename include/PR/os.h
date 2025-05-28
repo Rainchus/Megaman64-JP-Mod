@@ -840,7 +840,7 @@ extern void		osAckRamromWrite(void);
 
 extern void     bcopy(const void *, void *, int);
 extern int      bcmp(const void *, const void *, int);
-extern void     bzero(void *, int);
+extern void     _bzero(void *, int);
 
 /* Miscellaneous operations */
 

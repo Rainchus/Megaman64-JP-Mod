@@ -1,4 +1,5 @@
 #include "megaman64.h"
+#include "viint.h"
 
 extern volatile s32 isSaveOrLoadActive;
 extern u8 p1DpadInputs; //801C4450
@@ -21,19 +22,35 @@ CustomThread gCustomThread = {0};
 void savestateMain(void);
 void loadstateMain(void);
 
-void savestateCheckMain(void) {
-    if (p1DpadInputs == 1) {
-        isSaveOrLoadActive = 1;
-        osCreateThread(&gCustomThread.thread, 255, (void*)savestateMain, NULL,
-                gCustomThread.stack + sizeof(gCustomThread.stack), 255);
-        osStartThread(&gCustomThread.thread);
+extern __OSViContext vi[2];
+extern __OSViContext* __osViCurr;
+extern __OSViContext* __osViNext;
 
-    } else if (p1DpadInputs == 2) {
-        isSaveOrLoadActive = 1;
-        osCreateThread(&gCustomThread.thread, 255, (void*)loadstateMain, NULL,
-                gCustomThread.stack + sizeof(gCustomThread.stack), 255);
-        osStartThread(&gCustomThread.thread);
+void osViRepeatLine(u8 active) {
+    register u32 saveMask = __osDisableInt();
+
+    if (active) {
+        __osViNext->state |= VI_STATE_REPEATLINE;
+    } else {
+        __osViNext->state &= ~VI_STATE_REPEATLINE;
     }
+
+    __osRestoreInt(saveMask);
+}
+
+void savestateCheckMain(void) {
+    // if (p1DpadInputs == 1) {
+    //     isSaveOrLoadActive = 1;
+    //     osCreateThread(&gCustomThread.thread, 255, (void*)savestateMain, NULL,
+    //             gCustomThread.stack + sizeof(gCustomThread.stack), 255);
+    //     osStartThread(&gCustomThread.thread);
+
+    // } else if (p1DpadInputs == 2) {
+    //     isSaveOrLoadActive = 1;
+    //     osCreateThread(&gCustomThread.thread, 255, (void*)loadstateMain, NULL,
+    //             gCustomThread.stack + sizeof(gCustomThread.stack), 255);
+    //     osStartThread(&gCustomThread.thread);
+    // }
 
     while (isSaveOrLoadActive == 1) {
 
@@ -198,9 +215,11 @@ Gfx* DrawCustom(Gfx* gfxMain) {
     if (init == 0) {
         init = 1;
         gfx_init();
+        crash_screen_init();
     }
 
     
+    _bzero(buffer, sizeof(buffer));
 
     format_time_30fps(gTime, buffer);
     //gfxMain = gfx_draw_rectangle(gfxMain, 0, 0, 80, 32, 0x000000FF);
@@ -218,8 +237,10 @@ Gfx* DrawCustom(Gfx* gfxMain) {
         G_RM_XLU_SURF | G_RM_XLU_SURF2); // LO
     // gfxMain = gfx_begin(gfxMain); //set up gfx for drawing text correctly
 
-    gfxMain = gfx_printf_color(gfxMain, 10,5, 0xFFFFFFFF, "%s", buffer); //draw the text
-    gfxMain = gfx_printf_color(gfxMain, 10,15, 0xFFFFFFFF, "HP: %d", gCurHp); //draw the text
+    // gfxMain = gfx_printf_color(gfxMain, 10,5, 0xFFFFFFFF, "%s", buffer); //draw the text
+    // gfxMain = gfx_printf_color(gfxMain, 10,15, 0xFFFFFFFF, "HP: %d", gCurHp); //draw the text
+
+    //gfxMain = gfx_printf_color(gfxMain, 10,15, 0xFFFFFFFF, "HP: %d", 0); //draw the text
     //return drawCi4Image(gGfxMainPos, 0, 0, 32, 32, ciImage, palette);
 
     return gfxMain; //return pointer to current gfx pointer so the game can full sync and end the DL
