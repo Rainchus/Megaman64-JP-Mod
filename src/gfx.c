@@ -125,11 +125,15 @@ gfx_font *kfont = 0;
 //     gsSPEndDisplayList()
 // };
 
-u32 kzgfx[] = {
-    0xE7000000, 0x00000000, 0xD9000000, 0x00000000,
-    0xED000000, 0x005003C0, 0xEF002CF0, 0x00504244,
-    0xDF000000, 0x00000000,
-};
+// u32 kzgfx[] = {
+//     0xE7000000, 0x00000000, 0xD9000000, 0x00000000,
+//     0xED000000, 0x005003C0, 0xEF002CF0, 0x00504244,
+//     0xDF000000, 0x00000000,
+// };
+
+// u32 kzgfx[] = {
+//     0xDF000000, 0x00000000,
+// };
 
 Gfx* gfx_printf_color(Gfx* gfx, u16 left, u16 top, u32 color, const char *format, ...);
 
@@ -188,10 +192,10 @@ void gfx_init(){
     kfont->cy_tile = 16;
 }
 
-Gfx* gfx_begin(Gfx* gfx) {
-    gSPDisplayList(gfx++,&kzgfx);
-    return gfx;
-}
+// Gfx* gfx_begin(Gfx* gfx) {
+//     gSPDisplayList(gfx++,&kzgfx);
+//     return gfx;
+// }
 
 typedef struct {
     char            unk_0x00[0x230];            /* 0x00000 */

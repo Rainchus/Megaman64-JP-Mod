@@ -205,7 +205,18 @@ Gfx* DrawCustom(Gfx* gfxMain) {
     format_time_30fps(gTime, buffer);
     //gfxMain = gfx_draw_rectangle(gfxMain, 0, 0, 80, 32, 0x000000FF);
 
-    gfxMain = gfx_begin(gfxMain); //set up gfx for drawing text correctly
+    gDPSetScissor(gfxMain++, G_SC_NON_INTERLACE,
+              0, 0, 320, 240);
+
+    gDPSetOtherMode(gfxMain++, G_AD_DISABLE | G_CD_DISABLE |
+        G_CK_NONE | G_TC_FILT |
+        G_TD_CLAMP | G_TP_NONE |
+        G_TL_TILE | G_TT_NONE |
+        G_PM_NPRIMITIVE | G_CYC_1CYCLE |
+        G_TF_BILERP, // HI
+        G_AC_NONE | G_ZS_PRIM |
+        G_RM_XLU_SURF | G_RM_XLU_SURF2); // LO
+    // gfxMain = gfx_begin(gfxMain); //set up gfx for drawing text correctly
 
     gfxMain = gfx_printf_color(gfxMain, 10,5, 0xFFFFFFFF, "%s", buffer); //draw the text
     gfxMain = gfx_printf_color(gfxMain, 10,15, 0xFFFFFFFF, "HP: %d", gCurHp); //draw the text
