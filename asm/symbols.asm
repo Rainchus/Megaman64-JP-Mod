@@ -54,6 +54,9 @@
 .definelabel _Printf, 0x800A07F0
 .definelabel gTime, 0x801C44C4
 .definelabel sprintf, 0x8009A0A0
+.definelabel gCurHP, 0x8020CAEE
+.definelabel gMaxHP, 0x8020CB30
+
 
     //gfx_disp = malloc(GFX_SIZE); //0x7500
     //gfx_disp_work = malloc(GFX_SIZE);

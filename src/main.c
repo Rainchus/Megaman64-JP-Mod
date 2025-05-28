@@ -188,6 +188,9 @@ void format_time_30fps(int frame_count, char* out_str) {
     sprintf(out_str, "%02d:%02d:%02d.%03d", hours, minutes, seconds, milliseconds);
 }
 
+extern s16 gCurHp; //8020CAEE
+extern s16 gMaxHP; //8020CB30
+
 //example of drawing right before
 Gfx* DrawCustom(Gfx* gfxMain) {
     char buffer[64];
@@ -201,9 +204,12 @@ Gfx* DrawCustom(Gfx* gfxMain) {
 
     format_time_30fps(gTime, buffer);
     //gfxMain = gfx_draw_rectangle(gfxMain, 0, 0, 80, 32, 0x000000FF);
-    gfxMain = gfx_begin(gfxMain);
-    gfxMain = gfx_printf_color(gfxMain, 10,5, 0xFFFFFFFF, "%s", buffer);
+
+    gfxMain = gfx_begin(gfxMain); //set up gfx for drawing text correctly
+
+    gfxMain = gfx_printf_color(gfxMain, 10,5, 0xFFFFFFFF, "%s", buffer); //draw the text
+    gfxMain = gfx_printf_color(gfxMain, 10,15, 0xFFFFFFFF, "HP: %d", gCurHp); //draw the text
     //return drawCi4Image(gGfxMainPos, 0, 0, 32, 32, ciImage, palette);
 
-    return gfxMain;
+    return gfxMain; //return pointer to current gfx pointer so the game can full sync and end the DL
 }
