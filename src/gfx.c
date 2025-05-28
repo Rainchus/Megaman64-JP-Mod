@@ -188,8 +188,9 @@ void gfx_init(){
     kfont->cy_tile = 16;
 }
 
-void gfx_begin(){
-    gSPDisplayList(gGfxMainPos++,&kzgfx);
+Gfx* gfx_begin(Gfx* gfx) {
+    gSPDisplayList(gfx++,&kzgfx);
+    return gfx;
 }
 
 typedef struct {
@@ -257,6 +258,7 @@ Gfx* gfx_draw_rectangle(Gfx* gfx, int x, int y, int width, int height, u32 color
 }
 
 Gfx* gfx_printchars(Gfx* gfx, gfx_font *font, u16 x, u16 y, u32 color, const char *chars, u32 charcnt){
+    gDPSetRenderMode(gfx++, G_RM_AA_XLU_SURF, G_RM_AA_XLU_SURF2);
     gDPSetCombineMode(gfx++, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
 
     int chars_per_tile = font->cx_tile * font->cy_tile;

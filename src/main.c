@@ -197,9 +197,12 @@ Gfx* DrawCustom(Gfx* gfxMain) {
         gfx_init();
     }
 
+    
+
     format_time_30fps(gTime, buffer);
     //gfxMain = gfx_draw_rectangle(gfxMain, 0, 0, 80, 32, 0x000000FF);
-    gfxMain = gfx_printf_color(gfxMain, 10,5, 0xFF0000FF, "%s", buffer);
+    gfxMain = gfx_begin(gfxMain);
+    gfxMain = gfx_printf_color(gfxMain, 10,5, 0xFFFFFFFF, "%s", buffer);
     //return drawCi4Image(gGfxMainPos, 0, 0, 32, 32, ciImage, palette);
 
     return gfxMain;
