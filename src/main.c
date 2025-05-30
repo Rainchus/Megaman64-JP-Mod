@@ -1,9 +1,29 @@
 #include "megaman64.h"
 #include "viint.h"
 
+extern s32 gCamUnk; //some unknown camera parameter, related to position somehow?
+//80033120: JAL memcpy //updates camera to player position
+//8004DC84: JAL 0x80030A50 //somehow related to collision checking?
+//8004DA84: JAL 0x8004DBEC //related to moving player
+
 extern volatile s32 isSaveOrLoadActive;
 extern u8 p1DpadInputs; //801C4450
 extern u32 gTime;
+
+extern Unk* D_80195300;
+extern Unk2* D_801E0EF0;
+extern volatile s32 D_80207C80;
+extern s32 D_80218B20;
+extern s32* D_80218CC0;
+extern u32 D_800CF420;
+extern u32 D_800CF424;
+extern s32 D_800CF428;
+extern u16 D_800CF434;
+extern u16 D_80195304;
+extern u16 D_80195306;
+extern u32 D_801B7544;
+extern OSMesgQueue D_8021D28C;
+Gfx* DrawCustom(Gfx* gfxMain);
 
 s32 init = 0;
 
@@ -19,6 +39,7 @@ typedef struct CustomThread {
 
 CustomThread gCustomThread = {0};
 
+Gfx* gfx_printf_color(Gfx* gfx, u16 left, u16 top, u32 color, const char *format, ...);
 void savestateMain(void);
 void loadstateMain(void);
 
@@ -115,8 +136,7 @@ void func_80092C10(void*, s32);
 extern void func_80092B50(void);
 extern void func_80092D60(void*, s32);
 
-extern s32 D_800A6970; //unk type
-extern s32* D_801E0EF0; //unk type
+extern Unk2 D_800A6970;
 extern s32 D_801E6CB0;
 extern Gfx D_800A6980[];
 extern u16* gFrameBufferPtrs[2];
@@ -124,6 +144,7 @@ extern u8* gDepthBufferPtr;
 
 void func_80025C60_Hook(void) {
     Gfx sp10[257];
+    s32 i = 0;
 
     func_80092B70();
     func_80092C10(gFrameBufferPtrs, 2);
@@ -133,24 +154,17 @@ void func_80025C60_Hook(void) {
     D_801E0EF0 = &D_800A6970;
     func_800927A4();
     
-    //jump an link to DL at D_800A6980
-    sp10[0].words.w0 = (G_DL << 24);
-    sp10[0].words.w1 = OS_K0_TO_PHYSICAL(D_800A6980);
-
-    //full sync
-    sp10[1].words.w0 = (G_RDPFULLSYNC << 24);
-    sp10[1].words.w1 = 0;
-
-    //end DL
-    sp10[2].words.w0 = (G_ENDDL << 24);
-    sp10[2].words.w1 = 0;
+    gSPDisplayList(&sp10[i++], OS_K0_TO_PHYSICAL(D_800A6980));
+    gDPFullSync(&sp10[i++]);
+    gSPEndDisplayList(&sp10[i++]);
     
-    func_8009292C(sp10, 0x18, 0, 0x40000);
+    func_8009292C(sp10, sizeof(Gfx) * i, 0, 0x40000);
     func_80092B70();
 }
 
 void func_80025D14_Hook(void) {
     Gfx sp10[256];
+    s32 i = 0;
 
     func_80092560();
     func_80092B70();
@@ -161,32 +175,13 @@ void func_80025D14_Hook(void) {
     D_801E0EF0 = &D_800A6970;
     func_800927A4();
 
-    //jump an link to DL at D_800A6980
-    sp10[0].words.w0 = (G_DL << 24);
-    sp10[0].words.w1 = OS_K0_TO_PHYSICAL(D_800A6980);
-
-    //full sync
-    sp10[1].words.w0 = (G_RDPFULLSYNC << 24);
-    sp10[1].words.w1 = 0;
-
-    //end DL
-    sp10[2].words.w0 = (G_ENDDL << 24);
-    sp10[2].words.w1 = 0;
+    gSPDisplayList(&sp10[i++], OS_K0_TO_PHYSICAL(D_800A6980));
+    gDPFullSync(&sp10[i++]);
+    gSPEndDisplayList(&sp10[i++]);
     
-    func_8009292C(sp10, 0x18, 0, 0x40000);
+    func_8009292C(sp10, sizeof(Gfx) * i, 0, 0x40000);
     func_80092B70();
 }
-
-void gfx_draw_rectangle2(int x, int y, int width, int height, u32 color){
-    gDPSetCombineMode(gGfxMainPos++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
-    gDPSetPrimColor(gGfxMainPos++,0,0,(color >> 24) & 0xFF,(color >> 16) & 0xFF,(color >> 8) & 0xFF,color & 0xFF);
-    gDPPipeSync(gGfxMainPos++);
-    gDPFillRectangle(gGfxMainPos++,x,y,x + width, y + height);
-}
-
-Gfx* gfx_printf_color(Gfx* gfx, u16 left, u16 top, u32 color, const char *format, ...);
-
-//Gfx* drawCi4Image(Gfx* gfx, int x, int y, int width, int height, u8* texture, u16* palette)
 
 void format_time_30fps(int frame_count, char* out_str) {
     // Convert frames to total milliseconds (1000 ms per second, 30 frames per second)
@@ -205,12 +200,68 @@ void format_time_30fps(int frame_count, char* out_str) {
     sprintf(out_str, "%02d:%02d:%02d.%03d", hours, minutes, seconds, milliseconds);
 }
 
+//draw game
+void func_8009292C_Hook(Gfx* gfxData, s32 gfxDataSize, s32 arg2, u32 arg3) {
+    u32 mask;
+
+    u8* curDLPos = (u8*)gfxData;
+    Gfx* endDLAddr;
+
+    //parse DL commands to find end of DL
+    while (*curDLPos != 0xDF) {
+        curDLPos += 8;
+    }
+
+    endDLAddr = curDLPos;
+    endDLAddr = DrawCustom(endDLAddr); //insert new DL data
+    gSPEndDisplayList(endDLAddr++); //end DL
+    gGfxMainPos = endDLAddr;
+
+    gfxDataSize = (u8*)endDLAddr - (u8*)gfxData; //calculate new size with end - beginning
+
+    D_80195300->unk40 = gfxData; //gfxData points to the beginning of the current display list to parse
+    D_80195300->unk44 = gfxDataSize;
+    D_80195300->unk14 = (arg3 >> 0x10);
+    D_80195300->unk20 = D_801E0EF0[arg2].unk_00;
+    D_80195300->unk28 = D_801E0EF0[arg2].unk_04;
+    D_80195300->unk38 = D_800CF428;
+    D_80195300->unk3C = D_800CF428 + ((D_800CF424 >> 3) * 8);
+    D_80195300->unkC = D_80218B20;
+    D_80195300->unk8 = (u16)arg3;
+    
+    if (D_800CF434 & 4) {
+        D_800CF434 ^= 4;
+        D_80195300->unk14 |= 2;
+    }
+    
+    D_800CF434 = arg3;
+    
+    if (arg3 & 1) {
+        D_80195300->unk54 = &D_80195306;
+        D_801B7544 = (D_801B7544 + 1) % D_800CF420;
+        D_80218B20 = D_80218CC0[D_801B7544];
+        
+    } else {
+        D_80195300->unk54 = &D_80195304;
+    }
+    
+    mask = osSetIntMask(1);
+    D_80207C80++;
+    osSetIntMask(mask);
+    osWritebackDCacheAll();
+    osSendMesg(&D_8021D28C, D_80195300, 1);
+    D_80195300 = D_80195300->next;
+}
+
 extern s16 gCurHp; //8020CAEE
 extern s16 gMaxHP; //8020CB30
+Gfx* gfx_begin(Gfx*);
+Gfx* gfx_draw_rectangle(Gfx* gfx, int x, int y, int width, int height, u32 color);
 
 //example of drawing right before
 Gfx* DrawCustom(Gfx* gfxMain) {
     char buffer[64];
+    s32 yRoot = -2;
 
     if (init == 0) {
         init = 1;
@@ -218,27 +269,12 @@ Gfx* DrawCustom(Gfx* gfxMain) {
         crash_screen_init();
     }
 
-    
-    _bzero(buffer, sizeof(buffer));
-
     format_time_30fps(gTime, buffer);
-    //gfxMain = gfx_draw_rectangle(gfxMain, 0, 0, 80, 32, 0x000000FF);
 
-    gDPSetScissor(gfxMain++, G_SC_NON_INTERLACE,
-              0, 0, 320, 240);
-
-    gDPSetOtherMode(gfxMain++, G_AD_DISABLE | G_CD_DISABLE |
-        G_CK_NONE | G_TC_FILT |
-        G_TD_CLAMP | G_TP_NONE |
-        G_TL_TILE | G_TT_NONE |
-        G_PM_NPRIMITIVE | G_CYC_1CYCLE |
-        G_TF_BILERP, // HI
-        G_AC_NONE | G_ZS_PRIM |
-        G_RM_XLU_SURF | G_RM_XLU_SURF2); // LO
-    // gfxMain = gfx_begin(gfxMain); //set up gfx for drawing text correctly
-
-    // gfxMain = gfx_printf_color(gfxMain, 10,5, 0xFFFFFFFF, "%s", buffer); //draw the text
-    // gfxMain = gfx_printf_color(gfxMain, 10,15, 0xFFFFFFFF, "HP: %d", gCurHp); //draw the text
+    gfxMain = gfx_begin(gfxMain); //set up gfx for drawing text correctly
+    gfxMain = gfx_draw_rectangle(gfxMain, 0, 0, 110, 26 + yRoot, 0x000000FF);
+    gfxMain = gfx_printf_color(gfxMain, 10,5 + yRoot, 0xFFFFFFFF, "%s", buffer); //draw current igt
+    gfxMain = gfx_printf_color(gfxMain, 10,15 + yRoot, 0xFFFFFFFF, "HP: %d", gCurHp); //draw current hp
 
     //gfxMain = gfx_printf_color(gfxMain, 10,15, 0xFFFFFFFF, "HP: %d", 0); //draw the text
     //return drawCi4Image(gGfxMainPos, 0, 0, 32, 32, ciImage, palette);

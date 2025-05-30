@@ -64,7 +64,20 @@
 .definelabel __osRunningThread, 0x800D0060;
 .definelabel __osFaultedThread, 0x800D0064;
 .definelabel __osTimerList, 0x800D0070;
-
+.definelabel osSetIntMask, 0x80094120;
+.definelabel D_800CF420, 0x800CF420
+.definelabel D_800CF424, 0x800CF424
+.definelabel D_800CF428, 0x800CF428
+.definelabel D_800CF434, 0x800CF434
+.definelabel D_80195300, 0x80195300
+.definelabel D_80218B20, 0x80218B20
+.definelabel D_801B7544, 0x801B7544
+.definelabel D_80218CC0, 0x80218CC0
+.definelabel D_80195306, 0x80195306
+.definelabel D_80207C80, 0x80207C80
+.definelabel D_8021D28C, 0x8021D28C
+.definelabel D_80195304, 0x80195304
+.definelabel gCamUnk, 0x801DC84C
 
 .definelabel ldiv, 0x800A2E80
 .definelabel lldiv, 0x800A2F04

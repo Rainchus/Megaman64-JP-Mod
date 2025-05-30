@@ -35,14 +35,21 @@
 	J func_8003CF4C_Hook
 	NOP
 
-.org 0x800280A8
-	JAL drawCustomMainAsm
+.org 0x8009292C
+	J func_8009292C_Hook
 	NOP
 
-.org 0x80025C60
-	J func_80025C60_Hook
-	NOP
+//.org 0x800280A8
+	//JAL drawCustomMainAsm
+	//NOP
 
-.org 0x80025D14
-	J func_80025D14_Hook
-	NOP
+//.org 0x800280C8
+	//NOP //SW r0, 0x0004 (a1) //writes 0x00000000 of 0xDF000000 00000000 command
+
+//.org 0x80025C60
+	//J func_80025C60_Hook
+	//NOP
+
+//.org 0x80025D14
+	//J func_80025D14_Hook
+	//NOP
