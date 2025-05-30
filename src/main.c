@@ -207,13 +207,14 @@ void func_8009292C_Hook(Gfx* gfxData, s32 gfxDataSize, s32 arg2, u32 arg3) {
     u8* curDLPos = (u8*)gfxData;
     Gfx* endDLAddr;
 
-    //parse DL commands to find end of DL
-    while (*curDLPos != 0xDF) {
+    //parse DL commands to find full sync
+    while (*curDLPos != 0xE9) {
         curDLPos += 8;
     }
 
-    endDLAddr = curDLPos;
+    endDLAddr = (Gfx*)curDLPos;
     endDLAddr = DrawCustom(endDLAddr); //insert new DL data
+    gDPFullSync(endDLAddr++);
     gSPEndDisplayList(endDLAddr++); //end DL
     gGfxMainPos = endDLAddr;
 
