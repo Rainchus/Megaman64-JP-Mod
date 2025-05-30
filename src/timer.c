@@ -33,52 +33,52 @@ extern s16 D_801C4824;
 extern Unk8020CA80 D_8020CA80;
 
 //draws a few different things on the screen when pausing
-void func_8003CF4C_Hook(UnkArg0* arg0) {
-    Unk8020CA80* temp = &D_8020CA80;
+// void func_8003CF4C_Hook(UnkArg0* arg0) {
+//     Unk8020CA80* temp = &D_8020CA80;
 
-    switch (arg0->unk_01) {
-    case 0:
-        if (D_801B5D88 != 0) {
-            D_801C4824 = 1;
-            func_8004B570();
-            func_8002A41C(0x10);
-            func_8002A41C(0x16);
-            func_8002A41C(0x17);
-            func_80036DF8(0);
-            arg0->unk_01++;
-            func_80089B70();
-            return;
-        }
-    default:
-        return;
-    case 1:
-        func_8002C714(0x300, 0, 0x40, 0x100);
-        func_800362F0(0x24, -2);
-        D_801C4824 = 0;
-        func_800573C0();
-        func_80036AB0(0, 1, 0);
-        arg0->unk_01++;
-        func_80061578();
-        func_8004B5A8(-1);
-        return;
-    case 2:
-        arg0->unk_01 += func_80057424();
-        return;
-    case 3:
-        D_801C4824 = 1;
-        arg0->unk_01++;
-        break;
-    case 4:
-        func_80035648(2);
-        func_80073AF0();
-        func_80035794(D_801C4508);
-        func_80036838();
-        D_801C4824 = 0;
-        func_800571A4(temp);
-        temp->unk_BD &= ~0x40;
-        func_800290C4(5);
-        arg0->unk_00 = 3;
-        arg0->unk_01 = 1;
-        break;
-    }
-}
+//     switch (arg0->unk_01) {
+//     case 0:
+//         if (D_801B5D88 != 0) {
+//             D_801C4824 = 1;
+//             func_8004B570();
+//             func_8002A41C(0x10);
+//             func_8002A41C(0x16);
+//             func_8002A41C(0x17);
+//             func_80036DF8(0);
+//             arg0->unk_01++;
+//             func_80089B70();
+//             return;
+//         }
+//     default:
+//         return;
+//     case 1:
+//         func_8002C714(0x300, 0, 0x40, 0x100);
+//         func_800362F0(0x24, -2);
+//         D_801C4824 = 0;
+//         func_800573C0();
+//         func_80036AB0(0, 1, 0);
+//         arg0->unk_01++;
+//         func_80061578();
+//         func_8004B5A8(-1);
+//         return;
+//     case 2:
+//         arg0->unk_01 += func_80057424();
+//         return;
+//     case 3:
+//         D_801C4824 = 1;
+//         arg0->unk_01++;
+//         break;
+//     case 4:
+//         func_80035648(2);
+//         func_80073AF0();
+//         func_80035794(D_801C4508);
+//         func_80036838();
+//         D_801C4824 = 0;
+//         func_800571A4(temp);
+//         temp->unk_BD &= ~0x40;
+//         func_800290C4(5);
+//         arg0->unk_00 = 3;
+//         arg0->unk_01 = 1;
+//         break;
+//     }
+// }

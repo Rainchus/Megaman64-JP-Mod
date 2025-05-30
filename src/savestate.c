@@ -13,6 +13,10 @@
 //game thread 6: func_80093A30
 //game thread 7: func_800270F8
 
+extern int __osSpDeviceBusy(void);
+extern int __osDpDeviceBusy(void);
+int __osSiDeviceBusy(void);
+
 volatile s32 isSaveOrLoadActive = 0;
 
 int __osPiDeviceBusy() {

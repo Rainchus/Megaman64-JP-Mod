@@ -2,6 +2,7 @@
     "files.associations": {
         "megaman64.h": "c",
         "ultra64.h": "c",
-        "compare": "c"
+        "compare": "c",
+        "gfx.h": "c"
     }
 }

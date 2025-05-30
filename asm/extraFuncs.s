@@ -121,28 +121,3 @@ optimized_memcpy:
     end_memcpy:
         jr $ra                   // Return
         nop
-
-
-drawCustomMainAsm:
-	ADDIU sp, sp, -0x20
-	SW a1, 0x0010 (sp)
-	SW a2, 0x0014 (sp)
-	SW v1, 0x0018 (sp)
-	SW ra, 0x001C (sp)
-
-	SW r0, 0x2774 (at) //restore from hook
-
-	JAL DrawCustom
-	ADDU a0, a1, r0 //move gGfxMainPos to a0
-	//returns current dl
-	ADDU a1, v0, r0 //move current gGfxMainPos to a1 for use in code after the hook
-
-	//LW a1, 0x0010 (sp)
-	LW a2, 0x0014 (sp)
-	LW v1, 0x0018 (sp)
-	LW ra, 0x001C (sp)
-
-	LUI v0, 0xE900 //restore from hook
-	SW v0, 0x0000 (a1) //
-	JR RA
-	ADDIU sp, sp, 0x20

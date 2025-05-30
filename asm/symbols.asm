@@ -4,7 +4,8 @@
 .definelabel __osSiDeviceBusy, 0x800A2E60;
 .definelabel osInvalDCache, 0x80099100;
 .definelabel osInvalICache, 0x800991B0;
-.definelabel p1DpadInputs, 0x801C4450;
+.definelabel p1Inputs, 0x801C4450;
+.definelabel p1InputsPressed, 0x801C4456;
 .definelabel __osDisableInt, 0x8009FFA0;
 .definelabel __osRestoreInt, 0x800A0010;
 .definelabel osCreateMesgQueue, 0x8009A130;
@@ -53,7 +54,7 @@
 .definelabel memcpy, 0x8009A074
 .definelabel _Printf, 0x800A07F0
 .definelabel gTime, 0x801C44C4
-.definelabel sprintf, 0x8009A0A0
+.definelabel _sprintf, 0x8009A0A0
 .definelabel gCurHP, 0x8020CAEE
 .definelabel gMaxHP, 0x8020CB30
 .definelabel _bzero, 0x80099F70
@@ -78,6 +79,8 @@
 .definelabel D_8021D28C, 0x8021D28C
 .definelabel D_80195304, 0x80195304
 .definelabel gCamUnk, 0x801DC84C
+.definelabel gPlayer, 0x8020CA80
+.definelabel _strlen, 0x8009A050
 
 .definelabel ldiv, 0x800A2E80
 .definelabel lldiv, 0x800A2F04

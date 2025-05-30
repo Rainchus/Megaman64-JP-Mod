@@ -17,16 +17,31 @@ typedef struct {
 CrashScreen gCrashScreen = {0}; //force into .data section so it's zeroed on boot
 
 extern OSTime __osCurrentTime;
+extern __OSViContext vi[2];
+extern __OSViContext* __osViCurr;
+extern __OSViContext* __osViNext;
+extern OSThread *__osFaultedThread;
+extern OSThread *__osActiveQueue;
+void* memcpy(void* destination, const void* source, u32 size);
+void osViRepeatLine(u8);
+OSTime osGetTime(void);
+void infiniteLoop(void);
 
 void osSetTime(u64 time) {
     __osCurrentTime = time;
 }
 
-u64 osGetTime();
-void* memcpy(void* destination, const void* source, u32 size);
-void osViRepeatLine(u8);
+void osViRepeatLine(u8 active) {
+    register u32 saveMask = __osDisableInt();
 
-extern OSThread *__osActiveQueue;
+    if (active) {
+        __osViNext->state |= VI_STATE_REPEATLINE;
+    } else {
+        __osViNext->state &= ~VI_STATE_REPEATLINE;
+    }
+
+    __osRestoreInt(saveMask);
+}
 
 OSThread* __osGetActiveQueue(void) {
     return __osActiveQueue;
@@ -314,12 +329,6 @@ OSThread* crash_screen_get_faulted_thread(void) {
 
     return NULL;
 }
-
-#define OS_MESG_BLOCK 1
-
-void infiniteLoop(void);
-
-extern OSThread *__osFaultedThread;
 
 void crash_screen_thread_entry(void* unused) {
     OSMesg mesg;

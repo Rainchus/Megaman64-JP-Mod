@@ -850,7 +850,7 @@ extern void		osExit(void);
 
 /* Printf */
 
-extern int		sprintf(char *s, const char *fmt, ...);
+extern int		_sprintf(char *s, const char *fmt, ...);
 extern void		osSyncPrintf(const char *fmt, ...);
 extern void		osAsyncPrintf(const char *fmt, ...);
 extern int		osSyncGetChars(char *buf);
