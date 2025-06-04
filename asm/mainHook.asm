@@ -41,6 +41,10 @@
 	//J tempTest
 	//NOP
 
+.org 0x8003C6A4
+	J mapCUpCheck
+	NOP
+
 //2d drawing hook
 .org 0x8009292C
 	J func_8009292C_Hook

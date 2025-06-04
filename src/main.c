@@ -5,6 +5,8 @@ s32 menuActive = 0;
 s32 cursorPos = 0;
 Gfx customGfx[8092] ALIGNED(16) = {0};
 
+//80032E38 gets player input for use in game
+
 extern s32 gCamUnk; //some unknown camera parameter, related to position somehow?
 //80033120: JAL memcpy //updates camera to player position
 //8004DC84: JAL 0x80030A50 //somehow related to collision checking?
@@ -346,11 +348,20 @@ Gfx* BuildMenuDLMain(Gfx* gfxMain, s32 yRoot, Menu* curPage, s32 pageEntries) {
     return gfxMain;
 }
 
-void ControlMenuToggle(void) {
-    if (p1InputsPressed & CONT_D) { //if c-down is pressed, toggle menu
+s32 menuCheck(void) {
+    if (p1InputsPressed & 8) { //if c-down is pressed, toggle menu
         menuActive ^= 1;
+        return 1;
     }
+
+    return menuActive;
 }
+// //menuCheck
+// void ControlMenuToggle(void) {
+//     if (p1InputsPressed & CONT_D) { //if c-down is pressed, toggle menu
+//         menuActive ^= 1;
+//     }
+// }
 
 void ControlMenuMain(Menu* curPage, s32 wrapperValue) {
     switch (p1InputsPressed) {
@@ -454,7 +465,7 @@ void BuildCustomDL(void) {
         crash_screen_init();
     }
 
-    ControlMenuToggle();
+    //ControlMenuToggle();
 
     gSPDisplayList(curGfxPos++,&kzgfx);
 

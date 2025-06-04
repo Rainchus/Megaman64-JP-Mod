@@ -93,6 +93,20 @@ tempTest:
 	J 0x8005D354
 	 NOP
 
+mapCUpCheck:
+	JAL menuCheck
+	NOP
+	BEQZ v0, isZero
+	NOP
+	//menu toggled, skip opening map
+	J 0x8003C6C4
+	NOP
+	
+	isZero:
+	LUI v0, 0x800B
+	J 0x8003C6AC
+	 LW v0, 0xCBE8 (v0)
+
 // MIPS assembly function for memory copy in chunks of 8 bytes
 // using LD and SD instructions
 
