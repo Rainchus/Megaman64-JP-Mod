@@ -6,6 +6,7 @@
 #include "viint.h"
 #include "gfx.h"
 
+#define ALIGNED(n) __attribute__((aligned(n)))
 #define ARRAY_COUNT(arr) (s32)(sizeof(arr) / sizeof(arr[0]))
 
 typedef char *outfun(char*,const char*,unsigned int);

@@ -3,7 +3,7 @@
 
 s32 menuActive = 0;
 s32 cursorPos = 0;
-Gfx customGfx[8092] = {0};
+Gfx customGfx[8092] ALIGNED(16) = {0};
 
 extern s32 gCamUnk; //some unknown camera parameter, related to position somehow?
 //80033120: JAL memcpy //updates camera to player position
@@ -44,7 +44,7 @@ typedef struct CustomThread {
     /* 0x9D2 */ u16 height;
 } CustomThread; // size = 0x9D4
 
-CustomThread gCustomThread = {0};
+CustomThread gCustomThread ALIGNED(16) = {0};
 
 Gfx* gfx_printf_color(Gfx* gfx, u16 left, u16 top, u32 color, const char *format, ...);
 void savestateMain(void);
@@ -52,19 +52,27 @@ void loadstateMain(void);
 void gfx_init(void);
 void crash_screen_init(void);
 
-void savestateCheckMain(void) {
-    // if (p1Inputs == 0x0100) {
-    //     isSaveOrLoadActive = 1;
-    //     osCreateThread(&gCustomThread.thread, 255, (void*)savestateMain, NULL,
-    //             gCustomThread.stack + sizeof(gCustomThread.stack), 255);
-    //     osStartThread(&gCustomThread.thread);
+u32 osDpGetStatus() {
+    return IO_READ(DPC_STATUS_REG);
+}
 
-    // } else if (p1Inputs == 0x0200) {
-    //     isSaveOrLoadActive = 1;
-    //     osCreateThread(&gCustomThread.thread, 255, (void*)loadstateMain, NULL,
-    //             gCustomThread.stack + sizeof(gCustomThread.stack), 255);
-    //     osStartThread(&gCustomThread.thread);
-    // }
+void osDpSetStatus(u32 data) {
+    IO_WRITE(DPC_STATUS_REG, data);
+}
+
+void savestateCheckMain(void) {
+    if (p1Inputs == 0x0100) {
+        //isSaveOrLoadActive = 1;
+        osCreateThread(&gCustomThread.thread, 255, (void*)savestateMain, NULL,
+                gCustomThread.stack + sizeof(gCustomThread.stack), 255);
+        osStartThread(&gCustomThread.thread);
+
+    } else if (p1Inputs == 0x0200) {
+        //isSaveOrLoadActive = 1;
+        osCreateThread(&gCustomThread.thread, 255, (void*)loadstateMain, NULL,
+                gCustomThread.stack + sizeof(gCustomThread.stack), 255);
+        osStartThread(&gCustomThread.thread);
+    }
 
     while (isSaveOrLoadActive == 1) {
 
@@ -72,19 +80,19 @@ void savestateCheckMain(void) {
 }
 
 void rdpWaitOnSaveOrLoad(void) {
-    while (isSaveOrLoadActive == 1) {
+    while (isSaveOrLoadActive) {
 
     }
 }
 
 void rdpWaitOnSaveOrLoad2(void) {
-    while (isSaveOrLoadActive == 1) {
+    while (isSaveOrLoadActive) {
 
     }
 }
 
 void rdpWaitOnSaveOrLoad3(void) {
-    while (isSaveOrLoadActive == 1) {
+    while (isSaveOrLoadActive) {
 
     }
 }
@@ -105,14 +113,14 @@ void rdpWaitOnSaveOrLoad5(void) {
 
 //seems to make it worse?
 void rdpWaitOnSaveOrLoad6(void) {
-    while (isSaveOrLoadActive == 1) {
-
+    while (isSaveOrLoadActive) {
+        //osYieldThread();
     }
 }
 
 void rdpWaitOnSaveOrLoad7(void) {
-    while (isSaveOrLoadActive == 1) {
-
+    while (isSaveOrLoadActive) {
+        //osYieldThread();
     }
 }
 

@@ -5,6 +5,14 @@ savestateCheckMainAsm:
 	J 0x8003E1B4
 	SLL v0, v0, 2
 
+testTemp2: //8003E274
+	JAL savestateCheckMain
+	NOP
+	JAL 0x800290C4
+	ADDIU a0, r0, 1
+	J 0x8003E27C
+	NOP
+
 rdpWaitOnSaveOrLoadAsm: //800922B8
 	JAL rdpWaitOnSaveOrLoad
 	NOP
@@ -77,6 +85,13 @@ WaitOnSaveOrLoadAsm7:
 	J 0x80027130
 	NOP
 
+tempTest:
+	JAL rdpWaitOnSaveOrLoad7
+	NOP
+	jal 0x8005CE18
+	 nop
+	J 0x8005D354
+	 NOP
 
 // MIPS assembly function for memory copy in chunks of 8 bytes
 // using LD and SD instructions

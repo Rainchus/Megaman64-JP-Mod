@@ -6,6 +6,7 @@
 .definelabel osInvalICache, 0x800991B0;
 .definelabel p1Inputs, 0x801C4450;
 .definelabel p1InputsPressed, 0x801C4456;
+.definelabel osYieldThread, 0x8009B8D0;
 .definelabel __osDisableInt, 0x8009FFA0;
 .definelabel __osRestoreInt, 0x800A0010;
 .definelabel osCreateMesgQueue, 0x8009A130;

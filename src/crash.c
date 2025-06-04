@@ -14,7 +14,7 @@ typedef struct {
     /* 0x9D2 */ u16 height;
 } CrashScreen; // size = 0x9D4
 
-CrashScreen gCrashScreen = {0}; //force into .data section so it's zeroed on boot
+CrashScreen gCrashScreen ALIGNED(16) = {0}; //force into .data section so it's zeroed on boot
 
 extern OSTime __osCurrentTime;
 extern __OSViContext vi[2];
@@ -336,6 +336,8 @@ void crash_screen_thread_entry(void* unused) {
 
     osSetEventMesg(OS_EVENT_CPU_BREAK, &gCrashScreen.queue, (OSMesg)1);
     osSetEventMesg(OS_EVENT_FAULT, &gCrashScreen.queue, (OSMesg)2);
+
+    osSetEventMesg(OS_EVENT_SP_BREAK, &gCrashScreen.queue, (OSMesg)OS_EVENT_SP_BREAK);
 
     do {
         osRecvMesg(&gCrashScreen.queue, &mesg, OS_MESG_BLOCK);
